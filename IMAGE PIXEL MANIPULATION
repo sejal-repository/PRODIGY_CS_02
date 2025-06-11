@@ -1,0 +1,63 @@
+!pip install pillow
+
+from PIL import Image
+
+def encrypt_image(image_path, key, output_path):
+    image = Image.open(image_path)
+    encrypted_image = Image.new(image.mode, image.size)
+    pixels = image.load()
+    encrypted_pixels = encrypted_image.load()
+
+    for i in range(image.size[0]):
+        for j in range(image.size[1]):
+            r, g, b = pixels[i, j]
+            encrypted_pixels[i, j] = (
+                (r + key) % 256,
+                (g + key) % 256,
+                (b + key) % 256
+            )
+
+    encrypted_image.save(output_path)
+    print(f"Image encrypted and saved to {output_path}")
+
+encrypt_image("CAT.jpg", 75, "encrypted_CAT.jpg")
+
+def decrypt_image(image_path, key, output_path):
+    image = Image.open(image_path)
+    decrypted_image = Image.new(image.mode, image.size)
+    pixels = image.load()
+    decrypted_pixels = decrypted_image.load()
+
+    for i in range(image.size[0]):
+        for j in range(image.size[1]):
+            r, g, b = pixels[i, j]
+            decrypted_pixels[i, j] = (
+                (r - key) % 256,
+                (g - key) % 256,
+                (b - key) % 256
+            )
+
+    decrypted_image.save(output_path)
+    print(f"Image decrypted and saved to {output_path}")
+
+decrypt_image("encrypted_CAT.jpg", 75, "decrypted_CAT.jpg")
+
+# Simple menu for user
+def main():
+    print("1. Encrypt Image")
+    print("2. Decrypt Image")
+    choice = input("Enter choice: ")
+
+    image_path = input("Enter the path of the image: ")
+    key = int(input("Enter the encryption/decryption key (number): "))
+    output_path = input("Enter the output image path: ")
+
+    if choice == '1':
+        encrypt_image(image_path, key, output_path)
+    elif choice == '2':
+        decrypt_image(image_path, key, output_path)
+    else:
+        print("Invalid choice!")
+
+if __name__ == "__main__":
+    main()
